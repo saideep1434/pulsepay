@@ -1,6 +1,5 @@
 package com.pulsepay.payment_service.controller;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -8,7 +7,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.pulsepay.payment_service.dto.request.LoginRequest;
 import com.pulsepay.payment_service.dto.request.RegisterRequest;
+import com.pulsepay.payment_service.dto.response.LoginResponse;
 import com.pulsepay.payment_service.dto.response.RegisterResponse;
 import com.pulsepay.payment_service.service.AuthService;
 
@@ -29,6 +30,13 @@ public class AuthController {
 
         RegisterResponse response = authService.register(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);        
+      }
+
+      @PostMapping("/login")
+      public ResponseEntity<LoginResponse> login(@Valid @RequestBody LoginRequest request)
+      {
+        LoginResponse response = authService.login(request);
+        return ResponseEntity.status(HttpStatus.OK).body(response);
       }
   
 }

@@ -9,12 +9,15 @@ import com.pulsepay.payment_service.entity.Role;   // ✅ YOUR Role
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.pulsepay.payment_service.dto.request.LoginRequest;
 import com.pulsepay.payment_service.dto.request.RegisterRequest;
+import com.pulsepay.payment_service.dto.response.LoginResponse;
 import com.pulsepay.payment_service.dto.response.RegisterResponse;
 import com.pulsepay.payment_service.entity.User;
 import com.pulsepay.payment_service.enums.KycLevel;
 import com.pulsepay.payment_service.enums.RoleName;
 import com.pulsepay.payment_service.exception.EmailAlreadyExistsException;
+import com.pulsepay.payment_service.exception.InvalidCredentialsException;
 import com.pulsepay.payment_service.repository.KycDetailsRepository;
 import com.pulsepay.payment_service.repository.RoleRepository;
 import com.pulsepay.payment_service.repository.UserRepository;
@@ -30,6 +33,7 @@ public class AuthService {
     private final RoleRepository roleRepository;
     private final KycDetailsRepository kycDetailsRepository;
     private final PasswordEncoder passwordEncoder;
+    private final JwtService jwtService;
 
     @Transactional
     public RegisterResponse register(RegisterRequest request) {
@@ -74,5 +78,29 @@ public class AuthService {
       
 
 }
+
+    public LoginResponse login(LoginRequest request) 
+    {
+      
+      // 1. find user by email
+
+      User user = userRepository.findByEmail(request.getEmail())
+                .orElseThrow(() -> new InvalidCredentialsException("Invalid email or password"));
+      
+      
+      // 2. check if password matches
+
+      if(!passwordEncoder.matches(request.getPassword(), user.getPasswordHash())) {
+          throw new InvalidCredentialsException("Invalid email or password");
+      }
+
+      // 3. generate JWT token
+      String token = jwtService.generateToken(user);
+
+      return new LoginResponse(token, "Bearer", jwtService.getExpirationSeconds());
+
+    
+    
+    }
 
 }
