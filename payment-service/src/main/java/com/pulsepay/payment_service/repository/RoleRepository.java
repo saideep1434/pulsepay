@@ -8,6 +8,6 @@ import com.pulsepay.payment_service.entity.Role;
 import com.pulsepay.payment_service.enums.RoleName;
 
 public interface RoleRepository extends JpaRepository<Role, Long> {
-  Optional<Role> findByName(RoleName name);
-  
+
+    Optional<Role> findByName(RoleName name);
 }

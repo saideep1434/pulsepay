@@ -29,3 +29,4 @@ public class Role {
   private RoleName name;
 
 }
+
