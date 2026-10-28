@@ -2,9 +2,14 @@ package com.pulsepay.payment_service.service;
 
 import com.pulsepay.payment_service.entity.Role;
 import com.pulsepay.payment_service.entity.User;
+
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import lombok.experimental.SuperBuilder;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -49,5 +54,43 @@ public class JwtService {
 
     public long getExpirationSeconds() {
         return expirationMs / 1000;
+    }
+
+
+    private Claims parseClaims(String token) // actually checaking happens here in this method 
+    {
+        return Jwts.parser()
+                .verifyWith(secretKey) // "use OUR secret key"
+                .build()
+                .parseSignedClaims(token) // split → recalculate → compare → check exp // here the checking proc ess happens
+                .getPayload();  // all OK → give back the payload
+
+    }
+
+    public boolean isTokenValid(String token) // check token valid or not
+    {
+        try
+        {
+            parseClaims(token);
+            return true;
+        }
+        catch (JwtException | IllegalArgumentException e)
+        {
+            return false;
+        }
+    }
+
+    public String getEmailFromToken(String token)
+    {
+        Claims claims = parseClaims(token);
+        return claims.getSubject();
+    }
+
+
+    @@SuppressWarnings("unchecked")
+    public List<String> getRolesFromToken(String token)
+    {
+        Claims claims = parseClaims(token);
+        return claims.get("roles",List.class);
     }
 }
