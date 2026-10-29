@@ -45,5 +45,17 @@ public class GlobalExceptionHandler {
     );
     return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
   }
+
+  @ExceptionHandler(UnsupportedPaymentMethodException.class)
+   public ResponseEntity<ErrorResponse> handleUnsupportedMethod(UnsupportedPaymentMethodException ex)
+  {
+    ErrorResponse error = new ErrorResponse
+    (400, 
+      "UNSUPPORTED_PAYMENT_METHOD", 
+      ex.getMessage(), 
+      LocalDateTime.now()
+    );
+    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
+  }
   
 }
