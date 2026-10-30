@@ -3,9 +3,12 @@ package com.pulsepay.payment_service.processor;
 import java.math.BigDecimal;
 import java.util.UUID;
 
+import org.springframework.stereotype.Component;
+
 import com.pulsepay.payment_service.entity.Payment;
 import com.pulsepay.payment_service.enums.PaymentMethodType;
 
+@Component
 public class UpiPaymentProcessor  implements PaymentProcessor{
 
   private static final BigDecimal UPI_LIMIT = new BigDecimal("100000");

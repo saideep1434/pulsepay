@@ -57,5 +57,17 @@ public class GlobalExceptionHandler {
     );
     return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
   }
+
+  @ExceptionHandler(PaymentNotAllowedException.class)
+   public ResponseEntity<ErrorResponse> handlePaymentNotAllowed(PaymentNotAllowedException  ex)
+  {
+    ErrorResponse error = new ErrorResponse
+    (422, 
+      "UNPROCESSABLE_CONTENT", 
+      ex.getMessage(), 
+      LocalDateTime.now()
+    );
+    return ResponseEntity.status(HttpStatus.UNPROCESSABLE_CONTENT).body(error);
+  }
   
 }
